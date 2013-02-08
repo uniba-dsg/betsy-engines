@@ -1,0 +1,143 @@
+#! /bin/sh
+# Author: Cedric Roeck <cedric.roeck@gmail.com>
+#
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Betsy VirtualMachineServer listening for incoming TCP connections on Port 10000"
+NAME="betsy-vms"
+PID=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+JAR_DIR=/opt/betsy
+JAR_FILE=$JAR_DIR/betsy-vms.jar
+JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+MAIN_CLASS=de.uniba.wiai.lspi.betsy.webservice.guest.VirtualMachineServer
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+# Logging properties file
+#LOG_PROPERTIES_FILE=$JAR_DIR/conf/logging.properties
+
+# Set to 1 to enable debugging
+DEBUG=0
+DEBUG_OUTPUT_FILE=/opt/betsy/betsy_vms_output.txt
+DEBUG_ERROR_FILE=/opt/betsy/betsy_vms_log.txt
+
+do_start() {
+    echo $"Starting the $NAME..."
+
+    cd $JAR_DIR
+
+    if [ $DEBUG -eq 1 ]; then
+        jsvc -debug -pidfile $PID -home $JAVA_HOME -Djava.util.logging.config.file=$LOG_PROPERTIES_FILE -outfile $DEBUG_OUTPUT_FILE -errfile $DEBUG_ERROR_FILE -cp $JAR_FILE $MAIN_CLASS
+    else
+        jsvc -pidfile $PID -home $JAVA_HOME -Djava.util.logging.config.file=$LOG_PROPERTIES_FILE -cp $JAR_FILE $MAIN_CLASS
+    fi
+
+    # Check status of the application
+    if [ $? -eq 0 ]; then
+        echo $"$NAME Successfully STARTED"
+        return 0
+    else
+        echo $"Failed to START $NAME"
+        return 1
+    fi
+}
+
+do_stop() {
+    echo $"Stopping the $NAME..."
+
+    cd $JAR_DIR
+
+    if [ $DEBUG -eq 1 ]; then
+        jsvc -debug -stop -home $JAVA_HOME -pidfile $PID -Djava.util.logging.config.file=$LOG_PROPERTIES_FILE -outfile $DEBUG_OUTPUT_FILE -errfile $DEBUG_ERROR_FILE -cp $JAR_FILE $MAIN_CLASS
+    else
+        jsvc -stop -home $JAVA_HOME -pidfile $PID -Djava.util.logging.config.file=$LOG_PROPERTIES_FILE -cp $JAR_FILE $MAIN_CLASS
+    fi
+
+    if [ -e $PID ]; then
+        # Kill the process (so we are sure that it has stopped)
+        KPID=`cat $PID`
+        KPID1=$(($KPID - 1))
+        kill -9 $KPID $KPID1
+        rm -f $PID
+    fi
+
+    # Check status of the application
+    if [ $? -eq 0 ]; then
+        echo $"$NAME Successfully STOPPED"
+        return 0
+    else
+        echo $"Failed to STOP $NAME"
+        return 1
+    fi
+}
+
+do_restart() {
+    cd $JAR_DIR
+
+    do_stop
+
+    sleep 10
+
+    if [ -e $PID ]; then
+        # Kill the process (so we are sure that it has stopped)
+        KPID=`cat $PID`
+        KPID1=$(($KPID - 1))
+        kill -9 $KPID $KPID1
+        rm -f $PID
+    fi
+
+    sleep 2
+
+    do_start
+
+    # Check status of the application
+    if [ $? -eq 0 ]; then
+        echo $"$NAME Successfully RESTARTED"
+        return 0
+    else
+        echo $"Failed to RESTART $NAME"
+        return 1
+    fi
+}
+
+case "$1" in
+  start)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+	do_start
+	case "$?" in
+		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+	esac
+	;;
+  stop)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+	do_stop
+	case "$?" in
+		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+	esac
+	;;
+  status)
+       echo -n "$NAME is "
+       if [ -e $PID ]; then
+         echo "running"
+       else
+         echo "NOT running"
+       fi
+       exit $?
+       ;;
+  restart)
+	log_daemon_msg "Restarting $DESC" "$NAME"
+	do_restart
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|status|restart}" >&2
+	exit 3
+	;;
+esac
+
+exit $?
+
