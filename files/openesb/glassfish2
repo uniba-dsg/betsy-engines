@@ -1,0 +1,22 @@
+#!/bin/sh
+# Platform Services for GlassFish
+#
+
+GF_USER=glassfish
+GF_HOME=/opt/openesb/glassfish
+ASADMIN=$GF_HOME/bin/asadmin
+SU="su --login  $GF_USER --command  "
+
+case "$1" in
+start)
+    $SU "$ASADMIN start-domain > /dev/null 2>&1 &"
+    ;;
+stop)
+    $SU "$ASADMIN stop-domain > /dev/null 2>&1 &"
+    ;;
+restart)
+    $SU "$ASADMIN restart-domain > /dev/null 2>&1 &"
+    ;;
+\*)
+    echo "usage: $0 (start|stop|restart|help)"
+esac

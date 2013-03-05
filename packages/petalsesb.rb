@@ -34,7 +34,7 @@ package :petalsesb_user do
 
 end
 
-package :petalsesb_start do
+package :petalsesb_install do
   requires :petalsesb_user
   requires :petalsesb_download
 
@@ -77,5 +77,5 @@ package :petalsesb do
   requires :jre
   requires :petalsesb_download
   requires :petalsesb_user
-  requires :petalsesb_start
+  requires :petalsesb_install
 end
