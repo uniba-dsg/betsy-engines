@@ -3,11 +3,12 @@ betsy-engines
 
 This repository contains [Sprinkle](https://github.com/crafterm/sprinkle) configuration files for each BPEL engine supported by *[BETSY](https://github.com/uniba-dsg/betsy)*:
 
+* Active BPEL
 * Apache Ode
-* <del>BPEL-g</del> (not yet available)
-* <del>OpenEBS</del> (not yet available)
-* <del>Orchestra</del> (not yet available)
-* <del>Petals BPEL SE</del> (not yet available)
+* BPEL-g
+* OpenEBS
+* Orchestra
+* Petals BPEL SE
 
 It was created in January 2013 to support the extension of Betsy to run the conformance tests in preinstalled virtual machines.
 
@@ -16,7 +17,6 @@ It was created in January 2013 to support the extension of Betsy to run the conf
     files/     # All relevant scripts, tools, etc. which are needed for deployment
     packages/  # All packages with the detailed install instructions for the software
     Gemfile    # Includes all the gems needed to run Sprinkle
-
 
 
 * By default all '.rb' files in any directory below 'packages' are included into Sprinkle
