@@ -90,7 +90,7 @@ sudo gem install sprinkle
 ##### (L) Clone this Git repository
 
 ```bash
-$ git clone http://github.com/croeck/betsy-engines.git
+$ git clone http://bitbucket.org/croeck/betsy-engines
 ```
 
 ##### (L) Make sure the submodules of this Git repository are initialized and include the latest changes
