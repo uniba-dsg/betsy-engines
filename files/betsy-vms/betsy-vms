@@ -11,7 +11,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 JAR_DIR=/opt/betsy
 JAR_FILE=$JAR_DIR/betsy-vms.jar
 JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-MAIN_CLASS=de.uniba.wiai.lspi.betsy.webservice.guest.VirtualMachineServer
+MAIN_CLASS=de.uniba.wiai.dsg.betsy.virtual.server.BetsyVirtualMachineServer
 
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
@@ -20,9 +20,9 @@ MAIN_CLASS=de.uniba.wiai.lspi.betsy.webservice.guest.VirtualMachineServer
 #LOG_PROPERTIES_FILE=$JAR_DIR/conf/logging.properties
 
 # Set to 1 to enable debugging
-DEBUG=0
+DEBUG=1
 DEBUG_OUTPUT_FILE=/opt/betsy/betsy_vms_output.txt
-DEBUG_ERROR_FILE=/opt/betsy/betsy_vms_log.txt
+DEBUG_ERROR_FILE=/opt/betsy/betsy_vms_error.txt
 
 do_start() {
     echo $"Starting the $NAME..."
