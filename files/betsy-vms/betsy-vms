@@ -21,8 +21,8 @@ MAIN_CLASS=de.uniba.wiai.dsg.betsy.virtual.server.BetsyVirtualMachineServer
 
 # Set to 1 to enable debugging
 DEBUG=1
-DEBUG_OUTPUT_FILE=/opt/betsy/betsy_vms_output.txt
-DEBUG_ERROR_FILE=/opt/betsy/betsy_vms_error.txt
+DEBUG_OUTPUT_FILE=/opt/betsy/log/betsy_vms_output.txt
+DEBUG_ERROR_FILE=/opt/betsy/log/betsy_vms_error.txt
 
 do_start() {
     echo $"Starting the $NAME..."
