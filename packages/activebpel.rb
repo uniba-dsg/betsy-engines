@@ -20,7 +20,8 @@ package :activebpel do
   requires :activebpel_install
 
   noop do
-    post :install, "at now -f /usr/share/tomcat5.5/bin/restart.sh"
+    pre :install, "at now -f /usr/share/tomcat5.5/bin/restart.sh"
+    pre :install, "chown -R tomcat5.5:tomcat5.5 /usr/share/tomcat5.5/bpr/"
   end
 
   verify do
