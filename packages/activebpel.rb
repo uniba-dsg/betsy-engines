@@ -13,11 +13,22 @@ package :activebpel_download do
   end
 end
 
+package :activebpel_logsymlink do
+  noop do
+    pre :install, "ln -f -s /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log /usr/share/tomcat5.5/logs/aeDeployment.log"
+  end
+
+  verify do
+    has_file "/usr/share/tomcat5.5/logs/aeDeployment.log"
+  end
+end
+
 package :activebpel do
   requires :tomcat5_5_36
   requires :activebpel_download
   requires :activebpel_tomcat_parameters
   requires :activebpel_install
+  requires :activebpel_logsymlink
 
   noop do
     pre :install, "chown -R tomcat55:tomcat55 /usr/share/tomcat5.5/bpr/"
