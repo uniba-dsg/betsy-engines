@@ -15,8 +15,10 @@ end
 
 package :activebpel_logsymlink do
   noop do
-    pre :install, "ln -f /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log /usr/share/tomcat5.5/logs/aeDeployment.log"
-    pre :install, "chown -R tomcat55:tomcat55 /usr/share/tomcat5.5/logs/aeDeployment.log"
+	pre :install, "touch /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
+    pre :install, "chown -R tomcat55:tomcat55 /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
+	pre :install, "chmod -R 755 /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
+	pre :install, "ln /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log /usr/share/tomcat5.5/logs/aeDeployment.log"
   end
 
   verify do
