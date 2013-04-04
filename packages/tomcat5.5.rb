@@ -69,7 +69,7 @@ end
 
 package :tomcat5_user do
   noop do
-    pre :install, "useradd -d /home/tomcat55 tomcat55"
+    pre :install, "useradd -m -d /home/tomcat55 tomcat55"
   end
   verify do
     has_user "tomcat55"

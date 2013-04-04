@@ -19,7 +19,7 @@ package :activebpel_logsymlink do
   end
 
   verify do
-    has_file "/usr/share/tomcat5.5/logs/aeDeployment.log"
+    has_symlink "/usr/share/tomcat5.5/logs/aeDeployment.log"
   end
 end
 
