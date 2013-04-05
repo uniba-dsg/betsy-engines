@@ -33,6 +33,20 @@ package :orchestra_tomcat_params do
   end
 end
 
+package :orchestra_log_symlink do
+  noop do
+    pre :install, "touch /home/betsy/orchestra-cxf-tomcat/error.txt"
+    pre :install, "chown -R betsy:betsy orchestra-cxf-tomcat"
+    pre :install, "ln /home/betsy/orchestra-cxf-tomcat/error.txt /var/lib/tomcat7/logs/error.txt"
+    pre :install, "ln -s /usr/share/tomcat7/lib /var/lib/tomcat7/"
+  end
+
+  verify do
+    has_file "/var/lib/tomcat7/logs/error.txt"
+    has_symlink "/var/lib/tomcat7/lib"
+  end
+end
+
 package :orchestra do
   # does need tomcat to get deployed as .war file
   requires :tomcat7
@@ -40,6 +54,7 @@ package :orchestra do
   requires :ant
   requires :orchestra_download
   requires :orchestra_tomcat_params
+  requires :orchestra_log_symlink
 
   noop do
     pre :install, "sed -i 's|catalina.home=[^ ]*|catalina.home=/var/lib/tomcat7|' orchestra-cxf-tomcat/conf/install.properties"
