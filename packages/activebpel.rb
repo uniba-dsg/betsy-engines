@@ -1,4 +1,4 @@
-﻿package :activebpel_download do
+package :activebpel_download do
   requires :unzip
   requires :wget
   version "5.0.2"
