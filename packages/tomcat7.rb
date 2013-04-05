@@ -6,6 +6,7 @@ package :tomcat7 do
 
   noop do
     # Make tomcat7 to owner, allows creation of folders, etc.
+    post :install, "mkdir /var/lib/tomcat7/ext/"
     post :install, "chown -R tomcat7:tomcat7 /usr/share/tomcat7"
     post :install, "chown -R tomcat7:tomcat7 /var/lib/tomcat7"
     post :install, "service tomcat7 restart"
@@ -13,6 +14,7 @@ package :tomcat7 do
 
   verify do
     has_folder '/var/lib/tomcat7'
+    has_folder '/var/lib/tomcat7/ext'
     has_process 'java'
     has_file '/var/run/tomcat7.pid'
   end
