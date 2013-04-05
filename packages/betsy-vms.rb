@@ -3,7 +3,8 @@ package :betsy_vms_bin do
 
   # transfer binary file
   transfer "files/betsy-vms/betsy-vms.jar", "/tmp/betsy-vms.jar" do
-    pre :install, "mkdir -p /opt/betsy"
+    pre :install, "mkdir -p /opt/betsy/log"
+    pre :install, "mkdir -p /opt/betsy/tmp"
     pre :install, "chmod -R 777 /opt/betsy/"
     post :install, "mv -f /tmp/betsy-vms.jar /opt/betsy/betsy-vms.jar"
     post :install, "chown root:root /opt/betsy/betsy-vms.jar"
