@@ -37,3 +37,30 @@ package :tomcat7_admin do
     file_contains "/var/lib/tomcat7/conf/tomcat-users.xml", "CUSTOM USER CONFIG"
   end
 end
+
+package :tomcat7_soapui_log do
+  noop do
+    pre :install, "touch /var/lib/tomcat7/soapui.log"
+    pre :install, "touch /var/lib/tomcat7/soapui-errors.log"
+  end
+
+  verify do
+    has_file "/var/lib/tomcat7/soapui.log"
+    has_file "/var/lib/tomcat7/soapui-errors.log"
+  end
+end
+
+package :tomcat7_soapui_symlink_log do
+  requires :tomcat7_soapui_log
+  noop do
+    pre :install, "chown -R tomcat7:tomcat7 /var/lib/tomcat7/soapui.log"
+    pre :install, "chown -R tomcat7:tomcat7 /var/lib/tomcat7/soapui-errors.log"
+    pre :install, "ln /var/lib/tomcat7/soapui.log /var/lib/tomcat7/logs/soapui.log"
+    pre :install, "ln /var/lib/tomcat7/soapui-errors.log /var/lib/tomcat7/logs/soapui-errors.log"
+  end
+
+  verify do
+    has_file "/var/lib/tomcat7/logs/soapui.log"
+    has_file "/var/lib/tomcat7/logs/soapui-errors.log"
+  end
+end

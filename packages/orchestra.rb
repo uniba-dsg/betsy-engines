@@ -55,6 +55,7 @@ package :orchestra do
   requires :orchestra_download
   requires :orchestra_tomcat_params
   requires :orchestra_log_symlink
+  requires :tomcat7_soapui_symlink_log
 
   noop do
     pre :install, "sed -i 's|catalina.home=[^ ]*|catalina.home=/var/lib/tomcat7|' orchestra-cxf-tomcat/conf/install.properties"
