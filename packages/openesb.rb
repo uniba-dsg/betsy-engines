@@ -50,6 +50,16 @@ package :openesb_install do
   end
 end
 
+package :openesb_login do
+  transfer "files/openesb/asadminpass", "/tmp/asadminpass" do
+    post :install, "mv /tmp/asadminpass /home/betsy/.asadminpass"
+  end
+
+  verify do
+    has_file "/home/betsy/.asadminpass"
+  end
+end
+
 package :openesb_service do
 
   transfer "files/openesb/glassfish", "/tmp/glassfish" do
@@ -79,13 +89,27 @@ package :openesb_user do
 
 end
 
+package :openesb_start_file do
+  
+  transfer "files/openesb/start.sh", "/tmp/start.sh" do
+    post :install, "mv /tmp/start.sh /opt/openesb/start.sh"
+  end
+
+  verify do
+    has_file "/opt/openesb/start.sh"
+  end
+
+end
+
 package :openesb_start do
   requires :openesb_install
   requires :openesb_service
+  requires :openesb_start_file
 
   # will be executed each time the installer is executed. if domain is already running nothing will happen
   noop do
-    pre :install, "service glassfish start"
+    # pre :install, "service glassfish start"
+    pre :install, "at now -f /opt/openesb/start.sh"
   end
 
 end
@@ -94,5 +118,6 @@ package :openesb do
   requires :jre
   requires :openesb_download
   requires :openesb_install
+  requires :openesb_login
   requires :openesb_start
 end
