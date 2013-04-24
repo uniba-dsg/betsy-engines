@@ -105,6 +105,7 @@ package :openesb_start do
   requires :openesb_install
   requires :openesb_service
   requires :openesb_start_file
+  requires :at
 
   # will be executed each time the installer is executed. if domain is already running nothing will happen
   noop do
