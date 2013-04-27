@@ -1,31 +1,35 @@
 betsy-engines
 =============
 
-This repository contains [Sprinkle](https://github.com/crafterm/sprinkle) configuration files for each BPEL engine supported by *[BETSY](https://github.com/uniba-dsg/betsy)*:
+This repository contains [Sprinkle](https://github.com/crafterm/sprinkle) configuration files for each WS-BPEL engine supported by *[BETSY](https://github.com/uniba-dsg/betsy)* as of April 2013:
 
-* Active BPEL
+* Active-BPEL
 * Apache Ode
-* BPEL-g
-* OpenEBS
+* bpel-g
+* OpenESB
 * Orchestra
-* Petals BPEL SE
+* Petals ESB
 
-It was created in January 2013 to support the extension of Betsy to run the conformance tests in preinstalled virtual machines.
+The repository was created to support the extension of betsy to run the conformance tests in preinstalled virtual machines as part of a bachelors thesis.
+
+## Sprinkle
+
+
+Sprinkle v0.4.2 requires the Ruby version 1.8.X and will not work with an installation of version 1.9 or 2.0.
+
+* By default all '.rb' files in any directory below 'pa* ckages' are included into Sprinkle
+* Version numbers can't be passed from a policy to a package, or from one package to another. They must be adjusted in the package itself
 
 ## Project Structure:
 
     files/     # All relevant scripts, tools, etc. which are needed for deployment
     packages/  # All packages with the detailed install instructions for the software
-    Gemfile    # Includes all the gems needed to run Sprinkle
+    Gemfile    # Includes all the gems needed to run Sprinkle v0.4.2
 
 
-* By default all '.rb' files in any directory below 'packages' are included into Sprinkle
-* Version numbers can't be passed from a policy to a package, or from one package to another. They must be adjusted in the package itself
+## How to create a new installation config file:
 
-
-## How to create a new server configuration file:
-
-##### Create a new policy for the server 'name_of_the_engine.rb'
+##### Create a new policy for the engine 'name_of_the_engine.rb'
 
 ```ruby
 require File.join(File.dirname(__FILE__),'common.rb')
@@ -45,9 +49,8 @@ end
 deploy
 ```
 
-* The file must include 'common.rb'!
-
-* One of the desired packages must contain the actual engine
+* The file shall include 'common.rb'!
+* One of the required packages shall contain the actual engine installation routine
 
 ##### add an entry to the 'packages/server-config.rb' to change the hostname of virtual machine**
 
@@ -63,17 +66,17 @@ package :server_config_name_of_the_engine do
 end
 ```
 
-## How to deploy a server based on an existing server configuration:
+## How to install a server based on an existing setup:
 
-__L:__
-the system on which sprinkle is installed and which starts the deployment process
+__H:__
+the host system on which sprinkle is installed and which guides the deployment process
 
 __R:__
 the virtual machine you want to deploy your configuration to
 
-### 1) Prepare the local system
+### 1) Prepare the host system
 
-##### (L) Install Sprinkle and it's dependencies
+##### (H) Install Sprinkle and it's dependencies
 
 ```bash
 sudo apt-get install ruby ruby1.8 ruby1.8-dev libopenssl-ruby1.8 wget
@@ -87,13 +90,13 @@ cd rubygems-1.8.24 && sudo ruby setup.rb && sudo ln -s /usr/bin/gem1.8 /usr/bin/
 sudo gem install sprinkle
 ```
 
-##### (L) Clone this Git repository
+##### (H) Clone this git repository
 
 ```bash
 $ git clone http://bitbucket.org/croeck/betsy-engines
 ```
 
-##### (L) Make sure the submodules of this Git repository are initialized and include the latest changes
+##### (H) Make sure the submodules of this git repository are initialized and include the latest changes of betsy
 
 ```bash
 $ git submodule init
@@ -104,7 +107,7 @@ $ git submodule update
 
 ### 2) Prepare the virtual machine
 
-##### (R) Create a new virtual machine with the preferred linux operating system. All scripts in this repository are optimized for the use with 'Ubuntu Server 12.04.1 LTS'
+##### (R) Create a new virtual machine with the preferred linux operating system. All scripts in this repository are optimized for the use with 'Ubuntu Server 12.04.2 LTS'
 
 ##### (R) If not already done, create an admin user (user with sudo privileges)
 
@@ -115,17 +118,17 @@ $ sudo apt-get update
 $ sudo apt-get upgrade
 ```
 
-##### (R) Install a SSH server, allow the login for the new user and make sure the SSH server is running
+##### (R) Install a SSH server, allow the login for the previously created admin user and make sure the SSH server is running
 
 ```bash
 $ sudo apt-get install openssh-server
 ```
 
-##### (R) Note or set the ip address of the virtual machine
+##### (R) Note the IP address of the virtual machine
 
 ### 3) Set final deployment details
 
-##### (L) Adjust the settings of the virtual machine in 'deploy.rb'
+##### (H) Adjust the settings of the virtual machine in 'deploy.rb'
 
 ```ruby
 default_run_options[:pty] = true
@@ -134,7 +137,9 @@ set :password, 'SSH_USERS_PASSWORD'
 role :target_box, "192.168.0.2"
 ```
 
-### 4) (L) Deploy the desired configuration
+* In case the VM is using a NAT network adapter, redirect the port 22 of the host to port 22 of the VM and use 127.0.0.1 as IP of the target box
+
+### 4) (H) Deploy the desired configuration
 
 ```bash
 $ sprinkle -s name_of_the_engine.rb
