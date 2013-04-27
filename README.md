@@ -10,7 +10,7 @@ This repository contains [Sprinkle](https://github.com/crafterm/sprinkle) config
 * Orchestra
 * Petals ESB
 
-The repository was created to support the extension of betsy to run the conformance tests in preinstalled virtual machines as part of a bachelors thesis.
+The repository was created to support the extension of betsy to run the conformance tests in preinstalled virtual machines as part of a bachelor thesis.
 
 ## Sprinkle
 
