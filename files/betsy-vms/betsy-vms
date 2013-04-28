@@ -11,7 +11,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 JAR_DIR=/opt/betsy
 JAR_FILE=$JAR_DIR/betsy-vms.jar
 JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-MAIN_CLASS=de.uniba.wiai.dsg.betsy.virtual.server.BetsyVirtualMachineServerDaemon
+MAIN_CLASS=betsy.virtual.server.BetsyVirtualMachineServerDaemon
 
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
