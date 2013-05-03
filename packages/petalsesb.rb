@@ -1,6 +1,7 @@
 package :petalsesb_download do
   requires :unzip
   requires :wget
+  requires :petalsesb_user
   version '4.0'
 
   noop do
@@ -11,6 +12,7 @@ package :petalsesb_download do
     pre :install, "unzip petals-esb-distrib-#{version}/esb/petals-esb-#{version}.zip -d ./petalsesb"
     pre :install, "mv -f petalsesb/petals-esb-#{version}/* /opt/petalsesb/"
     pre :install, "mv -f petals-esb-distrib-#{version} petals-esb-distrib"
+    pre :install, "chown -R petals:petals /opt/petalsesb"
     # now remove large files
     post :install, "rm -R -f petalsesb"
   end
@@ -34,16 +36,53 @@ package :petalsesb_user do
 
 end
 
-package :petalsesb_install do
+package :petalsesb_install_wait do
+
+  transfer "files/petalsesb/wait.sh", "/tmp/petalsesb_wait.sh" do
+    post :install, "mv /tmp/petalsesb_wait.sh /opt/petalsesb/wait.sh"
+  end
+
+  verify do
+    has_file "/opt/petalsesb/wait.sh"
+  end
+
+end
+
+package :petalsesb_start do
+  requires :petalsesb_install_components
+  requires :petalsesb_install_service
+  requires :petalsesb_install_wait
+
+  noop do
+    pre :install, "service petals stop"
+    pre :install, "rm -f /opt/petalsesb/log/petals.log"
+    pre :install, "service petals start"
+    post :install, "sh /opt/petalsesb/wait.sh"
+  end
+
+end
+
+package :petalsesb_install_components do
   requires :petalsesb_user
   requires :petalsesb_download
 
   noop do
     pre :install, "cp -f ./petals-esb-distrib/esb-components/petals-se-bpel-1.1.0.zip /opt/petalsesb/install"
     pre :install, "cp -f ./petals-esb-distrib/esb-components/petals-bc-soap-4.1.0.zip /opt/petalsesb/install"
-    #post :install, "rm -R -f petals-esb-distrib"
-    pre :install, "chown -R petals:petals /opt/petalsesb"
+    # not required anymore, cleanup
+    post :install, "rm -R -f petals-esb-distrib"
   end
+
+  verify do
+    has_file "/opt/petalsesb/install/petals-se-bpel-1.1.0.zip"
+    has_file "/opt/petalsesb/install/petals-bc-soap-4.1.0.zip"
+  end
+
+end
+
+package :petalsesb_install_service do
+  requires :petalsesb_user
+  requires :petalsesb_download
 
   transfer "files/petalsesb/petals", "/tmp/petals" do
     post :install, "mv /tmp/petals /etc/init.d/petals"
@@ -57,20 +96,6 @@ package :petalsesb_install do
     has_file "/etc/init.d/petals"
   end
 
-  transfer "files/petalsesb/wait.sh", "/tmp/petalsesb_wait.sh" do
-    pre :install, "service petals start"
-    post :install, "mv /tmp/petalsesb_wait.sh /opt/petalsesb/wait.sh"
-    post :install, "sh /opt/petalsesb/wait.sh"
-    post :install, "rm -R -f petals-esb-distrib"
-  end
-
-  #running state must not be confirmed as wait.sh only continues of petals is started
-
-  verify do
-    has_file "/opt/petalsesb/installed/petals-se-bpel-1.1.0.zip"
-    has_file "/opt/petalsesb/installed/petals-bc-soap-4.1.0.zip"
-  end
-
 end
 
 package :petalsesb do
@@ -78,5 +103,7 @@ package :petalsesb do
   requires :gawk
   requires :petalsesb_download
   requires :petalsesb_user
-  requires :petalsesb_install
+  requires :petalsesb_install_components
+  requires :petalsesb_install_service
+  requires :petalsesb_start
 end
