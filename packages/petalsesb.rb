@@ -75,6 +75,7 @@ end
 
 package :petalsesb do
   requires :jre
+  requires :gawk
   requires :petalsesb_download
   requires :petalsesb_user
   requires :petalsesb_install

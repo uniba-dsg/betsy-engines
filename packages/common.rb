@@ -6,6 +6,14 @@ package :git do
   end
 end
 
+package :gawk do
+  requires :apt_update
+  apt 'gawk'
+  verify do
+    has_executable 'gawk'
+  end
+end
+
 package :at do
   requires :apt_update
   apt 'at'
