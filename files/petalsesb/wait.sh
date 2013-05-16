@@ -1,5 +1,7 @@
 #! /bin/sh
 #
+sudo service petals restart
+
 while : ; do
   grep -Fq "Component started" /opt/petalsesb/logs/petals.log && break
   echo "Petals ESB is not started yet..."

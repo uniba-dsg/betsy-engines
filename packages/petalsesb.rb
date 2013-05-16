@@ -55,7 +55,11 @@ package :petalsesb_start do
 
   noop do
     pre :install, "service petals stop"
-    pre :install, "rm -f /opt/petalsesb/log/petals.log"
+    pre :install, "rm -f /opt/petalsesb/logs/petals.log"
+	pre :install, "touch /opt/petalsesb/logs/petals.log"
+	pre :install, "chown petals:petals /opt/petalsesb/logs/petals.log"
+	pre :install, "chmod 755 /opt/petalsesb/logs/petals.log"
+	pre :install, "sleep 10"
     pre :install, "service petals start"
     post :install, "sh /opt/petalsesb/wait.sh"
   end
