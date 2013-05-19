@@ -26,7 +26,7 @@ package :apache_ode do
   fpath "/var/lib/tomcat7/webapps/ode/WEB-INF/classes/log4j.properties"
 
   # transfer the log4j.properties file into the already deployed Apache Ode
-  transfer "files/betsy/src/main/resources/ode/log4j.properties", "/tmp/ode_log4j.properties"
+  transfer "files/ode/log4j.properties", "/tmp/ode_log4j.properties"
 
   noop do
     post :install, "mv -f /tmp/ode_log4j.properties #{fpath}"

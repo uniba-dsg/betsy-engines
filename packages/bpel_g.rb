@@ -6,7 +6,7 @@ package :bpel_g do
   fpath "/var/lib/tomcat7/webapps/bpel-g/WEB-INF/log4j.properties"
 
   # transfer the log4j.properties file into the already deployed bpel-g
-  transfer "files/betsy/src/main/resources/bpelg/log4j.properties", "/tmp/bpelg_log4j.properties"
+  transfer "files/bpel-g/log4j.properties", "/tmp/bpelg_log4j.properties"
 
   noop do
     post :install, "mv -f /tmp/bpelg_log4j.properties #{fpath}"

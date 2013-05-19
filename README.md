@@ -96,15 +96,6 @@ sudo gem install sprinkle
 $ git clone http://bitbucket.org/croeck/betsy-engines
 ```
 
-##### (H) Make sure the submodules of this git repository are initialized and include the latest changes of betsy
-
-```bash
-$ git submodule init
-$ git submodule update
-$ git merge origin/master
-$ git submodule update
-```
-
 ### 2) Prepare the virtual machine
 
 ##### (R) Create a new virtual machine with the preferred linux operating system. All scripts in this repository are optimized for the use with 'Ubuntu Server 12.04.2 LTS'
