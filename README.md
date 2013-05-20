@@ -76,7 +76,7 @@ the virtual machine you want to deploy your configuration to
 
 ### 1) Prepare the host system
 
-##### (H) Install Sprinkle and it's dependencies
+##### (H) Install Sprinkle and its dependencies
 
 ```bash
 sudo apt-get install ruby ruby1.8 ruby1.8-dev libopenssl-ruby1.8 wget
