@@ -14,9 +14,6 @@ The repository was created to support the extension of betsy to run the conforma
 
 ## Sprinkle
 
-
-Sprinkle v0.4.2 requires the Ruby version 1.8.X and will not work with an installation of version 1.9 or 2.0.
-
 * By default all '.rb' files in any directory below 'pa* ckages' are included into Sprinkle
 * Version numbers can't be passed from a policy to a package, or from one package to another. They must be adjusted in the package itself
 
@@ -57,12 +54,11 @@ deploy
 ```bash
 package :server_config_name_of_the_engine do
   requires :sed
-  hostname "betsy-name-of-the-engine"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-name-of-the-engine"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
 end
 ```
 
