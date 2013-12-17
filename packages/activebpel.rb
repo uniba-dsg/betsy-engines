@@ -2,25 +2,24 @@ package :activebpel_download do
   requires :unzip
   requires :wget
   version "5.0.2"
-  noop do
-    pre :install, "wget --no-check-certificate https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/activebpel-#{version}-bin.zip"
-    pre :install, "rm -R -f activebpel"
-    pre :install, "unzip activebpel-#{version}-bin.zip"
-    pre :install, "mv activebpel-#{version} activebpel"
-  end
+
+  runner "wget https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/activebpel-#{version}-bin.zip"
+  runner "rm -R -f activebpel"
+  runner "unzip activebpel-#{version}-bin.zip"
+  runner "mv activebpel-#{version} activebpel"
+
   verify do
     has_file "activebpel/install.sh"
   end
 end
 
 package :activebpel_logsymlink do
-  noop do
-    pre :install, "mkdir -p /home/tomcat55/AeBpelEngine/deployment-logs/"
-    pre :install, "touch /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
-    pre :install, "chown -R tomcat55:tomcat55 /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
-    pre :install, "chmod -R 755 /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
-    pre :install, "ln /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log /usr/share/tomcat5.5/logs/aeDeployment.log"
-  end
+
+  runner "mkdir --parents /home/tomcat55/AeBpelEngine/deployment-logs/"
+  runner "touch /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
+  runner "chown --recursive tomcat55:tomcat55 /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
+  runner "chmod -R 755 /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log"
+  runner "ln /home/tomcat55/AeBpelEngine/deployment-logs/aeDeployment.log /usr/share/tomcat5.5/logs/aeDeployment.log"
 
   verify do
     #has_symlink "/usr/share/tomcat5.5/logs/aeDeployment.log"
@@ -35,18 +34,14 @@ package :activebpel do
   requires :activebpel_install
   requires :activebpel_logsymlink
 
-  noop do
-    pre :install, "chown -R tomcat55:tomcat55 /usr/share/tomcat5.5/bpr/"
-    pre :install, "at now -f /usr/share/tomcat5.5/bin/restart.sh"
-  end
+  runner "chown --recursive tomcat55:tomcat55 /usr/share/tomcat5.5/bpr/"
+  runner "at now -f /usr/share/tomcat5.5/bin/restart.sh"
 
 end
 
 package :activebpel_install do
 
-  noop do
-    pre :install, "env CATALINA_HOME=/usr/share/tomcat5.5 sh activebpel/install.sh"
-  end
+  runner "env CATALINA_HOME=/usr/share/tomcat5.5 sh activebpel/install.sh"
 
 end
 
@@ -54,10 +49,9 @@ package :activebpel_tomcat_parameters do
   requires :tomcat5_5_36
 
   # copy configuration files to the machine
-  transfer "files/activebpel/setenv.sh", "/tmp/setenv.sh" do
-    post :install, %{mv /tmp/setenv.sh /usr/share/tomcat5.5/bin/setenv.sh}
-    post :install, "at now -f /usr/share/tomcat5.5/bin/restart.sh"
-  end
+  transfer "files/activebpel/setenv.sh", "/tmp/setenv.sh"
+  runner %{mv /tmp/setenv.sh /usr/share/tomcat5.5/bin/setenv.sh}
+  runner "at now -f /usr/share/tomcat5.5/bin/restart.sh"
 
   verify do
     has_file '/usr/share/tomcat5.5/bin/setenv.sh'

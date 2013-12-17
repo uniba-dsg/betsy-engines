@@ -4,17 +4,15 @@ package :tomcat7 do
 
   apt %w( tomcat7 )
 
-  noop do
-    # Make tomcat7 to owner, allows creation of folders, etc.
-    post :install, "mkdir /var/lib/tomcat7/ext/"
-    post :install, "chown -R tomcat7:tomcat7 /usr/share/tomcat7"
-    post :install, "chown -R tomcat7:tomcat7 /var/lib/tomcat7"
-    post :install, "service tomcat7 restart"
-  end
+  # Make tomcat7 to owner, allows creation of folders, etc.
+  runner "mkdir --parents /var/lib/tomcat7/ext/"
+  runner "chown --recursive tomcat7:tomcat7 /usr/share/tomcat7"
+  runner "chown --recursive tomcat7:tomcat7 /var/lib/tomcat7"
+  runner "service tomcat7 restart"
 
   verify do
-    has_folder '/var/lib/tomcat7'
-    has_folder '/var/lib/tomcat7/ext'
+    has_directory '/var/lib/tomcat7'
+    has_directory '/var/lib/tomcat7/ext'
     has_process 'java'
     has_file '/var/run/tomcat7.pid'
   end
@@ -25,11 +23,10 @@ package :tomcat7_admin do
   requires :apt_update
   apt %w( tomcat7-admin tomcat7-user )
 
-  transfer "files/tomcat7/tomcat-users.xml", "/tmp/tomcat-users.xml" do
-    post :install, %{mv -f /tmp/tomcat-users.xml /var/lib/tomcat7/conf/tomcat-users.xml}
-    post :install, "/etc/init.d/tomcat7 restart"
-    post :install, "sleep 2"
-  end
+  transfer "files/tomcat7/tomcat-users.xml", "/tmp/tomcat-users.xml"
+  runner %{mv -f /tmp/tomcat-users.xml /var/lib/tomcat7/conf/tomcat-users.xml}
+  runner "/etc/init.d/tomcat7 restart"
+  runner "sleep 2"
 
   verify do
     has_file "/var/lib/tomcat7/conf/tomcat-users.xml"
@@ -39,10 +36,8 @@ package :tomcat7_admin do
 end
 
 package :tomcat7_soapui_log do
-  noop do
-    pre :install, "touch /var/lib/tomcat7/soapui.log"
-    pre :install, "touch /var/lib/tomcat7/soapui-errors.log"
-  end
+  runner "touch /var/lib/tomcat7/soapui.log"
+  runner "touch /var/lib/tomcat7/soapui-errors.log"
 
   verify do
     has_file "/var/lib/tomcat7/soapui.log"
@@ -52,12 +47,11 @@ end
 
 package :tomcat7_soapui_symlink_log do
   requires :tomcat7_soapui_log
-  noop do
-    pre :install, "chown -R tomcat7:tomcat7 /var/lib/tomcat7/soapui.log"
-    pre :install, "chown -R tomcat7:tomcat7 /var/lib/tomcat7/soapui-errors.log"
-    pre :install, "ln /var/lib/tomcat7/soapui.log /var/lib/tomcat7/logs/soapui.log"
-    pre :install, "ln /var/lib/tomcat7/soapui-errors.log /var/lib/tomcat7/logs/soapui-errors.log"
-  end
+
+  runner "chown --recursive tomcat7:tomcat7 /var/lib/tomcat7/soapui.log"
+  runner "chown --recursive tomcat7:tomcat7 /var/lib/tomcat7/soapui-errors.log"
+  runner "ln /var/lib/tomcat7/soapui.log /var/lib/tomcat7/logs/soapui.log"
+  runner "ln /var/lib/tomcat7/soapui-errors.log /var/lib/tomcat7/logs/soapui-errors.log"
 
   verify do
     has_file "/var/lib/tomcat7/logs/soapui.log"

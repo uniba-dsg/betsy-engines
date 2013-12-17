@@ -9,11 +9,9 @@ package :h2_tomcat_db do
   requires :tomcat7
   requires :h2_tomcat_db_download
 
-  noop do
-    # copy the .jar file to the tomcat lib directory
-    pre :install, "cp ./#{getH2DBVersion()} /usr/share/tomcat7/lib/#{getH2DBVersion()}"
-    pre :install, "chmod 777 /usr/share/tomcat7/lib/#{getH2DBVersion()}"
-  end
+  # copy the .jar file to the tomcat lib directory
+  runner "cp ./#{getH2DBVersion()} /usr/share/tomcat7/lib/#{getH2DBVersion()}"
+  runner "chmod 777 /usr/share/tomcat7/lib/#{getH2DBVersion()}"
 
   verify do
    # verify .jar has been copied into tomcat's lib dir
@@ -23,9 +21,9 @@ end
 
 package :h2_tomcat_db_download do
   requires :wget
-  noop do
-    pre :install, "wget --no-check-certificate https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/#{getH2DBVersion()}"    
-  end
+
+  runner "wget https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/#{getH2DBVersion()}"
+
   verify do
     has_file getH2DBVersion()
   end

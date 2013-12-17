@@ -8,12 +8,12 @@ end
 
 package :server_config_ode do
   requires :sed
-  hostname "betsy-apache-ode"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-apache-ode"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
+
   verify do
     has_version_in_grep "cat /etc/hostname", hostname
     has_version_in_grep "cat /etc/hosts", hostname
@@ -22,12 +22,12 @@ end
 
 package :server_config_bpel_g do
   requires :sed
-  hostname "betsy-bpel-g"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-bpel-g"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
+
   verify do
     has_version_in_grep "cat /etc/hostname", hostname
     has_version_in_grep "cat /etc/hosts", hostname
@@ -36,12 +36,12 @@ end
 
 package :server_config_openesb do
   requires :sed
-  hostname "betsy-openesb"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-openesb"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
+
   verify do
     has_version_in_grep "cat /etc/hostname", hostname
     has_version_in_grep "cat /etc/hosts", hostname
@@ -50,12 +50,12 @@ end
 
 package :server_config_orchestra do
   requires :sed
-  hostname "betsy-orchestra"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-orchestra"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
+
   verify do
     has_version_in_grep "cat /etc/hostname", hostname
     has_version_in_grep "cat /etc/hosts", hostname
@@ -64,12 +64,12 @@ end
 
 package :server_config_petalsesb do
   requires :sed
-  hostname "betsy-petals-esb"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-petals-esb"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
+
   verify do
     has_version_in_grep "cat /etc/hostname", hostname
     has_version_in_grep "cat /etc/hosts", hostname
@@ -78,12 +78,12 @@ end
 
 package :server_config_activebpel do
   requires :sed
-  hostname "betsy-active-bpel"
-  noop do
-    pre :install, %Q{#{getSedChangeHostnameFunction(hostname)}}
-    pre :install, "hostname #{hostname}"
-    pre :install, %Q{#{getSedAppendHostnameFunction(hostname)}}
-  end
+  hostname = "betsy-active-bpel"
+
+  runner %Q{#{getSedChangeHostnameFunction(hostname)}}
+  runner "hostname #{hostname}"
+  runner %Q{#{getSedAppendHostnameFunction(hostname)}}
+
   verify do
     has_version_in_grep "cat /etc/hostname", hostname
     has_version_in_grep "cat /etc/hosts", hostname

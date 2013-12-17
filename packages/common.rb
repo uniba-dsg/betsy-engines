@@ -30,14 +30,6 @@ package :sed do
   end
 end
 
-package :svn do
-  requires :apt_update
-  apt 'subversion'
-  verify do
-    has_executable 'svn'
-  end
-end
-
 package :wget do
   requires :apt_update
   apt 'wget'
@@ -72,16 +64,6 @@ end
 
 package :apt_update do
   description 'Update the sources and upgrade the lists'
-  noop do
-    pre :install, 'apt-get update'
-  end
-end
 
-package :build_essentials do
-  description 'Build tools'
-  requires :apt_update
-  apt 'build-essential'
-  verify do
-    has_executable 'g++'
-  end
+  runner 'apt-get update'
 end

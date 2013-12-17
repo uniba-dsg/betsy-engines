@@ -6,9 +6,9 @@ package :jsvc do
   requires :apt_update
 
   apt 'jsvc'
-  
+
   verify do
     has_executable 'jsvc'
-  end  
+  end
 
 end

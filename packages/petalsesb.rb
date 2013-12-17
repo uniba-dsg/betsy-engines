@@ -4,21 +4,19 @@ package :petalsesb_download do
   requires :petalsesb_user
   version '4.0'
 
-  noop do
-    pre :install, "wget --no-check-certificate https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/petals-esb-distrib-#{version}.zip"
-    pre :install, "mkdir -p /opt/petalsesb"
-    pre :install, "rm -f -R petals-esb-distrib"
-    pre :install, "unzip petals-esb-distrib-#{version}.zip"
-    pre :install, "unzip petals-esb-distrib-#{version}/esb/petals-esb-#{version}.zip -d ./petalsesb"
-    pre :install, "mv -f petalsesb/petals-esb-#{version}/* /opt/petalsesb/"
-    pre :install, "mv -f petals-esb-distrib-#{version} petals-esb-distrib"
-    pre :install, "chown -R petals:petals /opt/petalsesb"
-    # now remove large files
-    post :install, "rm -R -f petalsesb"
-  end
+  runner "wget https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/petals-esb-distrib-#{version}.zip"
+  runner "mkdir --parents /opt/petalsesb"
+  runner "rm -f -R petals-esb-distrib"
+  runner "unzip petals-esb-distrib-#{version}.zip"
+  runner "unzip petals-esb-distrib-#{version}/esb/petals-esb-#{version}.zip -d ./petalsesb"
+  runner "mv -f petalsesb/petals-esb-#{version}/* /opt/petalsesb/"
+  runner "mv -f petals-esb-distrib-#{version} petals-esb-distrib"
+  runner "chown --recursive petals:petals /opt/petalsesb"
+  # now remove large files
+  runner "rm -R -f petalsesb"
 
   verify do
-    has_folder "/opt/petalsesb/bin"
+    has_directory "/opt/petalsesb/bin"
     has_file "/opt/petalsesb/bin/petals-launcher.jar"
   end
 
@@ -26,9 +24,7 @@ end
 
 package :petalsesb_user do
 
-  noop do
-    pre :install, "useradd petals -d /home/petals -m"
-  end
+  runner "useradd petals -d /home/petals -m"
 
   verify do
     has_user "petals"
@@ -38,9 +34,8 @@ end
 
 package :petalsesb_install_wait do
 
-  transfer "files/petalsesb/wait.sh", "/tmp/petalsesb_wait.sh" do
-    post :install, "mv /tmp/petalsesb_wait.sh /opt/petalsesb/wait.sh"
-  end
+  transfer "files/petalsesb/wait.sh", "/tmp/petalsesb_wait.sh"
+  runner "mv /tmp/petalsesb_wait.sh /opt/petalsesb/wait.sh"
 
   verify do
     has_file "/opt/petalsesb/wait.sh"
@@ -53,16 +48,14 @@ package :petalsesb_start do
   requires :petalsesb_install_service
   requires :petalsesb_install_wait
 
-  noop do
-    pre :install, "service petals stop"
-    pre :install, "rm -f /opt/petalsesb/logs/petals.log"
-	pre :install, "touch /opt/petalsesb/logs/petals.log"
-	pre :install, "chown petals:petals /opt/petalsesb/logs/petals.log"
-	pre :install, "chmod 755 /opt/petalsesb/logs/petals.log"
-	pre :install, "sleep 10"
-    pre :install, "service petals start"
-    post :install, "sh /opt/petalsesb/wait.sh"
-  end
+  runner "service petals stop"
+  runner "rm -f /opt/petalsesb/logs/petals.log"
+	runner "touch /opt/petalsesb/logs/petals.log"
+	runner "chown petals:petals /opt/petalsesb/logs/petals.log"
+	runner "chmod 755 /opt/petalsesb/logs/petals.log"
+	runner "sleep 10"
+  runner "service petals start"
+  runner "sh /opt/petalsesb/wait.sh"
 
 end
 
@@ -70,12 +63,10 @@ package :petalsesb_install_components do
   requires :petalsesb_user
   requires :petalsesb_download
 
-  noop do
-    pre :install, "cp -f ./petals-esb-distrib/esb-components/petals-se-bpel-1.1.0.zip /opt/petalsesb/install"
-    pre :install, "cp -f ./petals-esb-distrib/esb-components/petals-bc-soap-4.1.0.zip /opt/petalsesb/install"
-    # not required anymore, cleanup
-    post :install, "rm -R -f petals-esb-distrib"
-  end
+  runner "cp -f ./petals-esb-distrib/esb-components/petals-se-bpel-1.1.0.zip /opt/petalsesb/install"
+  runner "cp -f ./petals-esb-distrib/esb-components/petals-bc-soap-4.1.0.zip /opt/petalsesb/install"
+  # not required anymore, cleanup
+  runner "rm -R -f petals-esb-distrib"
 
   verify do
     has_file "/opt/petalsesb/install/petals-se-bpel-1.1.0.zip"
@@ -88,13 +79,12 @@ package :petalsesb_install_service do
   requires :petalsesb_user
   requires :petalsesb_download
 
-  transfer "files/petalsesb/petals", "/tmp/petals" do
-    post :install, "mv /tmp/petals /etc/init.d/petals"
-    post :install, "chmod 755 /etc/init.d/petals"
-    post :install, "chmod +x /etc/init.d/petals"
-    post :install, "chown root:root /etc/init.d/petals"
-    post :install, "update-rc.d petals defaults"
-  end
+  transfer "files/petalsesb/petals", "/tmp/petals"
+  runner "mv /tmp/petals /etc/init.d/petals"
+  runner "chmod 755 /etc/init.d/petals"
+  runner "chmod +x /etc/init.d/petals"
+  runner "chown root:root /etc/init.d/petals"
+  runner "update-rc.d petals defaults"
 
   verify do
     has_file "/etc/init.d/petals"
