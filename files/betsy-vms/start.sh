@@ -1,3 +1,3 @@
-#! /bin/sh
+#! /bin/bash
 #
-sudo service betsy-vms start
+sudo service betsy-vms restart
