@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/sh
 # Author: Cedric Roeck <cedric.roeck@gmail.com>
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Betsy VirtualMachineServer listening for incoming TCP connections on Port 10000"
