@@ -3,11 +3,11 @@ package :apache_ode_download do
   requires :wget
   version "1.3.5"
 
-  runner "wget https://lspi.wiai.uni-bamberg.de/svn/betsy/apache-ode-war-#{version}.zip"
-  runner "rm -R -f apache-ode-war"
-  runner "unzip apache-ode-war-#{version}.zip"
-  runner "mv apache-ode-war-#{version} apache-ode-war"
-  runner "rm apache-ode-war-#{version}.zip"
+  runner "unzip -qq -o apache-ode-war-#{version}.zip" do
+    pre :install, ["rm -R -f apache-ode-war", "wget --no-check-certificate https://lspi.wiai.uni-bamberg.de/svn/betsy/apache-ode-war-#{version}.zip"]
+    # the timeout is needed to make sure the unzip is finished
+    post :install, ["sleep 30", "mv apache-ode-war-#{version} apache-ode-war", "rm apache-ode-war-#{version}.zip"]
+  end
 
   verify do
     has_file "apache-ode-war/ode.war"
@@ -47,9 +47,11 @@ package :apache_ode_deploy do
   requires :apache_ode_dependencies
   requires :unzip
 
-  runner "mkdir --parents /var/lib/tomcat7/webapps/ode"
-  runner "unzip -o ./apache-ode-war/ode.war -d /var/lib/tomcat7/webapps/ode"
-  runner "chown --recursive tomcat7:tomcat7 /var/lib/tomcat7/webapps/ode"
+  runner "unzip -qq -o apache-ode-war/ode.war -d /var/lib/tomcat7/webapps/ode" do
+    pre :install, ["mkdir --parents /var/lib/tomcat7/webapps/ode"]
+    # the timeout is needed to make sure the unzip is finished
+    post :install, ["sleep 30", "chown --recursive tomcat7:tomcat7 /var/lib/tomcat7/webapps/ode"]
+  end
 
   verify do
    # verify ode got deployed
