@@ -2,12 +2,11 @@ package :betsy_vms_bin do
   description "Copy the binaries for the service"
 
   # transfer binary file
-  transfer "files/betsy-vms/betsy-vms.jar", "/tmp/betsy-vms.jar"
-  runner "mkdir --parents /opt/betsy/log"
-  runner "mkdir --parents /opt/betsy/tmp"
-  runner "chmod -R 777 /opt/betsy/"
-  runner "mv -f /tmp/betsy-vms.jar /opt/betsy/betsy-vms.jar"
-  runner "chown root:root /opt/betsy/betsy-vms.jar"
+  transfer "files/betsy-vms/betsy-vms.jar", "/tmp/betsy-vms.jar" do
+    pre :install, ["mkdir -p /opt/betsy/log", "mkdir -p /opt/betsy/tmp", "chmod -R 777 /opt/betsy/"]
+    post :install, ["mv -f /tmp/betsy-vms.jar /opt/betsy/betsy-vms.jar", "chown root:root /opt/betsy/betsy-vms.jar"]
+  end
+
 
   # verify files exist
   verify do
@@ -22,13 +21,9 @@ package :betsy_vms_install do
   requires :betsy_vms_bin
 
   # transfer the service and adjust rights
-  transfer "files/betsy-vms/betsy-vms", "/tmp/betsy-vms"
-  runner "mv -f /tmp/betsy-vms /etc/init.d/betsy-vms"
-  runner "chmod 755 /etc/init.d/betsy-vms"
-  runner "chmod +x /etc/init.d/betsy-vms"
-  runner "chown root:root /etc/init.d/betsy-vms"
-
-  runner 'update-rc.d betsy-vms defaults'
+  transfer "files/betsy-vms/betsy-vms", "/tmp/betsy-vms" do
+    post :install, ["mv /tmp/betsy-vms /etc/init.d/betsy-vms", "chmod 755 /etc/init.d/betsy-vms", "chmod +x /etc/init.d/betsy-vms", "chown root:root /etc/init.d/betsy-vms", "update-rc.d betsy-vms defaults"]
+  end
 
   verify do
     has_file "/etc/init.d/betsy-vms"
@@ -45,19 +40,14 @@ package :betsy_vms do
   requires :at
   requires :betsy_vms_install
 
-  transfer "files/betsy-vms/start.sh", "/tmp/start.sh"
-  runner "mv /tmp/start.sh /opt/betsy/start.sh"
-  runner "chmod +x /opt/betsy/start.sh"
-  runner "chown root:root /opt/betsy/start.sh"
-  runner "at now -f /opt/betsy/start.sh"
-  # sleep to make sure betsy-vms has been started
-  runner "sleep 10"
+  transfer "files/betsy-vms/start.sh", "/tmp/start.sh" do
+    post :install, ["mv /tmp/start.sh /opt/betsy/start.sh", "chmod +x /opt/betsy/start.sh", "chown root:root /opt/betsy/start.sh", "at now -f /opt/betsy/start.sh", "sleep 30"]
+  end
 
   verify do
     has_file "/opt/betsy/start.sh"
-    # TODO do not work - but script executes correctly
-    # has_process "jsvc"
-    # has_file "/var/run/betsy-vms.pid"
+    has_process "jsvc"
+    has_file "/var/run/betsy-vms.pid"
   end
 
 end
