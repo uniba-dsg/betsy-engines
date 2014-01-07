@@ -1,9 +1,6 @@
 BETSY_HOME="../betsy"
 BETSY_ENGINES_HOME=Dir.pwd
 
-# uncomment this to enable "caching" ;-)
-puts `cd #{BETSY_HOME} && gradlew jarServer && cp build/libs/betsy-vms.jar #{BETSY_ENGINES_HOME}/files/betsy-vms/betsy-vms.jar`
-
 # Load all packages
 Dir["#{File.dirname(__FILE__)}/packages/*.rb"].each do |f|
   require f

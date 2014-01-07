@@ -3,11 +3,14 @@ package :orchestra_download do
   requires :wget
   version "4.9.0"
 
-  runner "wget https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/orchestra-cxf-tomcat-#{version}.zip"
-  runner "rm -R -f orchestra-cxf-tomcat-#{version}"
-  runner "unzip orchestra-cxf-tomcat-#{version}.zip"
-  runner "mv orchestra-cxf-tomcat-#{version} orchestra-cxf-tomcat"
-  runner "rm orchestra-cxf-tomcat-#{version}.zip"
+  runner "unzip -qq -o orchestra-cxf-tomcat-#{version}.zip & wait $!" do
+    pre :install, [
+      "wget --no-check-certificate https://svn.lspi.wiai.uni-bamberg.de/svn/betsy/orchestra-cxf-tomcat-#{version}.zip",
+      "rm -R -f orchestra-cxf-tomcat-#{version}"]
+    post :install, [
+      "mv orchestra-cxf-tomcat-#{version} orchestra-cxf-tomcat",
+      "rm orchestra-cxf-tomcat-#{version}.zip"]
+  end
 
   verify do
     has_file "orchestra-cxf-tomcat/build.xml"
@@ -19,12 +22,14 @@ end
 package :orchestra_tomcat_params do
   requires :tomcat7
 
-  transfer "files/orchestra/setenv.sh", "/tmp/setenv.sh"
-  runner "mv -f /tmp/setenv.sh /usr/share/tomcat7/bin/setenv.sh"
-  runner "chmod 755 /usr/share/tomcat7/bin/setenv.sh"
-  runner "chown tomcat7:tomcat7 /usr/share/tomcat7/bin/setenv.sh"
-  runner "service tomcat7 restart"
-  runner "sleep 2"
+  transfer "files/orchestra/setenv.sh", "/tmp/setenv.sh" do
+    post :install, [
+      "mv -f /tmp/setenv.sh /usr/share/tomcat7/bin/setenv.sh",
+      "chmod 755 /usr/share/tomcat7/bin/setenv.sh",
+      "chown tomcat7:tomcat7 /usr/share/tomcat7/bin/setenv.sh",
+      "service tomcat7 restart",
+      "sleep 2"]
+  end
 
   verify do
     has_file "/usr/share/tomcat7/bin/setenv.sh"
@@ -34,10 +39,11 @@ end
 
 package :orchestra_log_symlink do
 
-  runner "touch /home/betsy/orchestra-cxf-tomcat/error.txt"
-  runner "chown --recursive betsy:betsy orchestra-cxf-tomcat"
-  runner "ln /home/betsy/orchestra-cxf-tomcat/error.txt /var/lib/tomcat7/logs/error.txt"
-  runner "ln -s /usr/share/tomcat7/lib /var/lib/tomcat7/"
+  runner [
+    "touch /home/betsy/orchestra-cxf-tomcat/error.txt",
+    "chown --recursive betsy:betsy orchestra-cxf-tomcat",
+    "ln /home/betsy/orchestra-cxf-tomcat/error.txt /var/lib/tomcat7/logs/error.txt",
+    "ln -s /usr/share/tomcat7/lib /var/lib/tomcat7/"]
 
   verify do
     has_file "/var/lib/tomcat7/logs/error.txt"
@@ -56,12 +62,13 @@ package :orchestra do
   requires :tomcat7_soapui_symlink_log
 
 
-  runner "sed -i 's|catalina.home=[^ ]*|catalina.home=/var/lib/tomcat7|' orchestra-cxf-tomcat/conf/install.properties"
-  runner "sed -i 's|catalina.base=[^ ]*|catalina.base=${catalina.home}|' orchestra-cxf-tomcat/conf/install.properties"
-  runner "ant -f orchestra-cxf-tomcat/install.xml install"
-  runner "chown tomcat7:tomcat7 /var/lib/tomcat7/webapps"
-  runner "chmod -R 755 /var/lib/tomcat7/webapps"
-  runner "service tomcat7 restart"
+  runner [
+    "sed -i 's|catalina.home=[^ ]*|catalina.home=/var/lib/tomcat7|' orchestra-cxf-tomcat/conf/install.properties",
+    "sed -i 's|catalina.base=[^ ]*|catalina.base=${catalina.home}|' orchestra-cxf-tomcat/conf/install.properties",
+    "ant -f orchestra-cxf-tomcat/install.xml install",
+    "chown tomcat7:tomcat7 /var/lib/tomcat7/webapps",
+    "chmod -R 755 /var/lib/tomcat7/webapps",
+    "service tomcat7 restart"]
 
   verify do
    # verify orchestra got deployed
